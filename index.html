@@ -254,9 +254,9 @@
 
   <div class="launch-text" id="launchText">🚀 Ready for Launch</div>
 
-  <div class="text" id="t1" style="top:10%;left:25%;color:white;font-size:2rem;font-weight:800;">Mission Control Online</div>
-  <div class="text" id="t2" style="bottom:20%;right:15%;color:#7dd3fc;font-size:1.5rem;">Navigation Systems Active</div>
-  <div class="text" id="t3" style="top:50%;left:50%;transform:translate(-50%,-50%);color:#a78bfa;font-size:3rem;font-weight:800;">Deep Space Trajectory</div>
+  <div class="text" id="t1" style="top:10%;left:25%;color:white;font-size:2rem;font-weight:800;">Explorer 6 First Viewed Earth from Space in 1959</div>
+  <div class="text" id="t2" style="bottom:20%;right:15%;color:#7dd3fc;font-size:1.5rem;">Satellites Track Ice Thickness Using Laser Beams</div>
+  <div class="text" id="t3" style="top:50%;left:50%;transform:translate(-50%,-50%);color:#a78bfa;font-size:3rem;font-weight:800;">SpaceX Operates 8,500+ US Satellites</div>
 
   <button class="btn" id="launch">▶ Start Mission</button>
 </div>
@@ -365,7 +365,7 @@
   let teleTimer;
   function startTelemetry(){
     const duration = 6000; // matches path time
-    const maxAlt   = 400;  // <-- capped at 400 km
+    const maxAlt   = 300;  // <-- capped at 300 km
     let t=0;
     hud.stat.textContent='Launch';
     clearInterval(teleTimer);
