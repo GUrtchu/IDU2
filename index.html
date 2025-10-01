@@ -291,6 +291,25 @@
     document.getElementById('t3')
   ];
 
+  // Different facts for each mission
+  const missionFacts = {
+    1: [ // Earth mission
+      "Explorer 6 First Viewed Earth from Space in 1959",
+      "Satellites Track Ice Thickness Using Laser Beams",
+      "SpaceX Operates 8,500+ US Satellites"
+    ],
+    2: [ // Mars mission
+      "Satellites Help Predict Weather and Climate Change",
+      "China's BeiDou System Has 900+ Satellites",
+      "New Satellites Are Becoming Smaller and Cheaper"
+    ],
+    3: [ // Jupiter mission
+      "Future Satellites Will Orbit Moon and Mars",
+      "UK Runs 700 Satellites for Commercial Use",
+      "Satellites Connect Internet to Remote Areas Worldwide"
+    ]
+  };
+
   let currentMission = 1;
 
   function dropDot(){
@@ -461,7 +480,14 @@
     }, 100);
 
     setTimeout(() => {
-      texts.forEach((el,i)=> setTimeout(()=> el.classList.add('show'), i*120));
+      texts.forEach((el,i)=> {
+        setTimeout(()=> {
+          // Update text content based on current mission
+          const facts = missionFacts[currentMission] || missionFacts[1];
+          el.textContent = facts[i];
+          el.classList.add('show');
+        }, i*120);
+      });
     }, 200);
 
     trailTimer = setInterval(dropDot, 25);
