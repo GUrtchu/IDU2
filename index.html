@@ -89,7 +89,9 @@
   /* Planet - Jupiter */
   .planet.jupiter{
     background:
+      /* Great Red Spot */
       radial-gradient(ellipse 25px 15px at 70% 60%,#dc2626,#0000 70%),
+      /* Horizontal bands - alternating white/light brown only */
       linear-gradient(0deg,
         #d4a574 0%, #ffffff 8%,
         #c4956a 12%, #f8fafc 20%,
@@ -101,6 +103,7 @@
         #c4956a 84%, #f8fafc 92%,
         #d4a574 96%, #ffffff 100%
       ),
+      /* Base atmosphere color */
       radial-gradient(circle at 30% 30%,#fbbf24,#d97706);
     box-shadow:0 0 35px #f59e0b55,0 0 70px #d9770633,inset 0 0 25px #ffffff08;
   }
@@ -108,6 +111,7 @@
   .planet.jupiter::after{
     content:'';position:absolute;inset:0;border-radius:50%;
     background:
+      /* Additional swirls and turbulence */
       radial-gradient(ellipse 15px 8px at 30% 40%,#fbbf2444,#0000),
       radial-gradient(ellipse 12px 6px at 80% 30%,#92400e66,#0000),
       radial-gradient(ellipse 10px 18px at 25% 70%,#d9770655,#0000);
@@ -250,9 +254,9 @@
 
   <div class="launch-text" id="launchText">🚀 Ready for Launch</div>
 
-  <div class="text" id="t1" style="top:10%;left:25%;color:white;font-size:2rem;font-weight:800;">—</div>
-  <div class="text" id="t2" style="bottom:20%;right:15%;color:#7dd3fc;font-size:1.5rem;">—</div>
-  <div class="text" id="t3" style="top:50%;left:50%;transform:translate(-50%,-50%);color:#a78bfa;font-size:3rem;font-weight:800;">—</div>
+  <div class="text" id="t1" style="top:10%;left:25%;color:white;font-size:2rem;font-weight:800;">Mission Control Online</div>
+  <div class="text" id="t2" style="bottom:20%;right:15%;color:#7dd3fc;font-size:1.5rem;">Navigation Systems Active</div>
+  <div class="text" id="t3" style="top:50%;left:50%;transform:translate(-50%,-50%);color:#a78bfa;font-size:3rem;font-weight:800;">Deep Space Trajectory</div>
 
   <button class="btn" id="launch">▶ Start Mission</button>
 </div>
@@ -281,65 +285,13 @@
   const launchText = document.getElementById('launchText');
   const destination = document.getElementById('destination');
   const missionCount = document.getElementById('missionCount');
-  const t1 = document.getElementById('t1');
-  const t2 = document.getElementById('t2');
-  const t3 = document.getElementById('t3');
+  const texts = [
+    document.getElementById('t1'),
+    document.getElementById('t2'),
+    document.getElementById('t3')
+  ];
 
   let currentMission = 1;
-
-  /* ===== FUN FACT ROTATION ===== */
-  const facts = {
-    1: [ // Earth
-      "Satellites can measure sea level rise to millimeter accuracy.",
-      "Polar ice melt is tracked from orbit to predict sea-level change.",
-      "Methane & CO₂ plumes are spotted from space.",
-      "Deforestation shows up in days, not years.",
-      "Ocean heatwaves are mapped by sea-surface temperature.",
-      "Cloud reflectivity (albedo) is monitored daily.",
-      "Urban heat islands glow in nighttime thermal images.",
-      "Soil moisture maps reveal drought before crops fail.",
-      "One pass is a snapshot—many passes make climate.",
-      "Space data → Earth decisions."
-    ],
-    2: [ // Mars
-      "Mars orbiters study a thin CO₂ atmosphere—similar tools as on Earth.",
-      "Dust storms can wrap the whole planet—tracked from orbit.",
-      "Mars Reconnaissance Orbiter can see objects ~table-sized.",
-      "Polar caps on Mars wax and wane—seasonal climate in action.",
-      "Radiation levels around Mars are measured by instruments in orbit.",
-      "Past water clues: satellites map minerals formed with liquid water.",
-      "Thin air, big swings: surface temps can vary ~60°C in a day.",
-      "Orbiters relay data to landers—space ‘cell towers’ on Mars.",
-      "High-res imagery helps pick safe landing sites.",
-      "Lessons from Earth-observing satellites shape Mars missions."
-    ],
-    3: [ // Jupiter / Future
-      "Studying Jupiter’s storms helps model extreme atmospheres.",
-      "Giant planets test our physics for climate circulation models.",
-      "Gravity assists from Jupiter have powered many Earth missions.",
-      "Mini CubeSats are now ‘hand-sized’ science labs in space.",
-      "Cleaning space junk is a real plan—deorbit & capture missions.",
-      "Constellations bring internet to remote oceans & mountains.",
-      "Energy balance from space: radiation in vs. out is the climate lever.",
-      "New sensors aim to see smaller changes with sharper eyes.",
-      "Calibrate → Validate → Trust the trend.",
-      "From pixels to climate stories."
-    ]
-  };
-  const factIndex = {1:0,2:0,3:0};
-
-  function setMissionTexts(){
-    const list = facts[currentMission];
-    if(!list || list.length === 0) return;
-    const start = factIndex[currentMission] % list.length;
-    const a = list[start];
-    const b = list[(start+1)%list.length];
-    const c = list[(start+2)%list.length];
-    t1.textContent = a;
-    t2.textContent = b;
-    t3.textContent = c;
-    factIndex[currentMission] = (start + 3) % list.length;
-  }
 
   function dropDot(){
     const r = sat.getBoundingClientRect();
@@ -402,7 +354,7 @@
     countEl.classList.remove('show');
   }
 
-  // ====== HUD telemetry (ALT capped at 400) ======
+  // ====== HUD telemetry (ALT capped at 600) ======
   const hud = {
     alt: document.getElementById('mAlt'),
     vel: document.getElementById('mVel'),
@@ -413,7 +365,7 @@
   let teleTimer;
   function startTelemetry(){
     const duration = 6000; // matches path time
-    const maxAlt   = 400;  // cap at 400 km
+    const maxAlt   = 400;  // <-- capped at 400 km
     let t=0;
     hud.stat.textContent='Launch';
     clearInterval(teleTimer);
@@ -427,41 +379,29 @@
       if(p>=1){ 
         hud.stat.textContent='Target reached'; 
         clearInterval(teleTimer);
-        // Auto-advance after 2s
+        // Auto-reset after 2 seconds
         setTimeout(autoLaunchNext, 2000);
       }
     },100);
   }
 
-  /* snap the sat back to start without “reverse sliding” */
-  function snapReset(){
-    sat.classList.remove('go');              // remove class that drives to 100%
-    const prev = sat.style.transition;
-    sat.style.transition = 'none';
-    sat.style.setProperty('offset-distance','0%');
-    void sat.offsetWidth;                    // force reflow
-    sat.style.transition = prev || '';
-  }
-
   function autoLaunchNext(){
-    // hide current visuals
-    sat.classList.remove('show');
+    // Reset current state
+    sat.classList.remove('go','show');
     planet.classList.remove('show');
-    [t1,t2,t3].forEach(el => el.classList.remove('show'));
+    texts.forEach(el => el.classList.remove('show'));
     clearInterval(trailTimer);
-
-    // prevent clicks while we chain missions
-    btn.disabled = true;
-
-    // reset sat position instantly (no reverse)
-    snapReset();
-
+    
     // Switch target
     currentMission++;
-
+    
+    // Wait for planet to fully fade before switching
     setTimeout(() => {
+      // Remove all planet classes first
       planet.classList.remove('mars', 'jupiter');
       destination.classList.remove('mars', 'jupiter');
+      
+      // Update mission info based on mission number
       missionCount.textContent = `Mission #${currentMission}`;
       
       if(currentMission === 2){
@@ -473,28 +413,29 @@
         destination.classList.add('jupiter');
         planet.classList.add('jupiter');
       } else {
+        // Default to Earth
         destination.textContent = '🌍 Earth';
       }
-
-      // Reset HUD
+      
+      // Reset telemetry
       hud.stat.textContent = 'Ready';
       hud.alt.textContent = '0';
       hud.vel.textContent = '0.0';
       hud.tmp.textContent = '260';
       hud.sig.textContent = '0%';
-
-      // set new mission facts now so they’re ready for the fade-in
-      setMissionTexts();
-
+      
+      // Check if we should continue or stop
       if(currentMission <= 3){
-        setTimeout(launchSequence, 1000); // auto launch next leg
+        // Auto-launch after 1 second
+        setTimeout(launchSequence, 1000);
       } else {
+        // Mission complete - show completion message
         hud.stat.textContent = 'Mission Complete';
         btn.textContent = '🔄 Restart Missions';
-        btn.disabled = false;   // unlock button after final leg
+        btn.disabled = false;
         launched = false;
       }
-    }, 800);
+    }, 1800); // Wait for planet fade transition
   }
 
   let trailTimer;
@@ -504,7 +445,6 @@
     if(launched) return;
     launched = true;
 
-    btn.disabled = true;
     launchText.classList.add('hide');
     sat.classList.add('show');
 
@@ -517,15 +457,11 @@
 
     setTimeout(() => {
       planet.classList.add('show');
-      snapReset();           // ensure we start at 0%
       sat.classList.add('go');
     }, 100);
 
-    // set/rotate facts for this mission BEFORE showing the text
-    setMissionTexts();
-
     setTimeout(() => {
-      [t1,t2,t3].forEach((el,i)=> setTimeout(()=> el.classList.add('show'), i*120));
+      texts.forEach((el,i)=> setTimeout(()=> el.classList.add('show'), i*120));
     }, 200);
 
     trailTimer = setInterval(dropDot, 25);
@@ -535,18 +471,18 @@
 
     startTelemetry();
 
-    setTimeout(()=> { clearInterval(trailTimer); }, 6200);
+    setTimeout(()=> {
+      clearInterval(trailTimer);
+    }, 6200);
 
     setTimeout(()=>{
-      if(currentMission > 3){
-        btn.disabled = false;
-        launched = false;
-      }
+      launched = false;
     }, 8000);
   }
 
   btn.addEventListener('click', () => {
     if(currentMission > 3 && !launched){
+      // Restart missions
       reset();
       setTimeout(launchSequence, 500);
     } else {
@@ -556,14 +492,14 @@
 
   function reset(){
     sat.classList.remove('go','show');
-    sat.style.setProperty('offset-distance','0%');
-    planet.classList.remove('show','mars','jupiter');
+    planet.classList.remove('show');
     launchText.classList.remove('hide');
-    [t1,t2,t3].forEach(el => el.classList.remove('show'));
+    texts.forEach(el => el.classList.remove('show'));
     clearInterval(trailTimer);
     currentMission = 1;
     destination.textContent = '🌍 Earth';
     destination.classList.remove('mars', 'jupiter');
+    planet.classList.remove('mars', 'jupiter');
     missionCount.textContent = 'Mission #1';
     launched = false;
     btn.textContent = '▶ Start Mission';
@@ -573,13 +509,7 @@
     hud.vel.textContent = '0.0';
     hud.tmp.textContent = '260';
     hud.sig.textContent = '0%';
-    // preload first set of facts so you're not showing placeholders
-    setMissionTexts();
   }
-
-  // preload first set of facts on load
-  setMissionTexts();
-
   btn.addEventListener('dblclick', reset);
 </script>
 </body>
